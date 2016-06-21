@@ -1,0 +1,24 @@
+# nano backups
+*~
+
+# emacs auto-save files
+"#*#"
+
+# My general rubbish
+res
+*.log
+
+# Files and directories created by the python setup.py process
+build/
+dist/
+*.tar.gz
+MANIFEST
+# file used with --record switch to setup.py
+files.txt
+
+# C related files
+*.o
+*.d
+
+
+

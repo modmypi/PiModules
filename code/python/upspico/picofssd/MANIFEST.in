@@ -1,0 +1,6 @@
+include MANIFEST.in
+include ChangeLog
+include LICENSE
+include README.txt
+include init.d/README.txt
+include default/README.txt

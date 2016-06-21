@@ -1,0 +1,134 @@
+#!/usr/bin/python
+
+"""
+
+PiModules(R) UPS PIco file-safe shutdown daemon.
+
+"""
+
+import sys
+import os
+import signal
+import atexit
+import time
+import logging
+import logging.handlers
+import argparse
+
+import RPi.GPIO as GPIO
+
+from pimodules.daemon import Daemon
+
+CLOCK_PIN = 27
+PULSE_PIN = 22
+BOUNCE_TIME = 30
+
+
+class fssd(Daemon):
+	def __init__(self, pidfile, loglevel=logging.NOTSET):
+		Daemon.__init__(self, pidfile)
+		self.loglevel = loglevel
+		self.log = logging.getLogger(__name__)
+		self.log.setLevel(self.loglevel)
+		handler = logging.handlers.SysLogHandler(address = '/dev/log')
+		formatter = logging.Formatter('%(module)s[%(process)s]: <%(levelname)s>: %(message)s')
+		handler.setFormatter(formatter)
+		self.log.addHandler(handler)
+
+		signal.signal(signal.SIGTERM, self.sigcatch)
+
+		self.counter = 0
+
+		# first interrupt on isr pin will start pulse high
+		self.sqwave = True
+
+	def setup(self):
+		"""
+		GPIO initialisation
+
+		Note: This cannot go in the __init__ method because the unix double-fork in the generic daemon code
+		mucks up the initialisation of the GPIO system.
+
+		So it is called in the over-ridden run method.
+		"""
+
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+		GPIO.setup(CLOCK_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+		GPIO.setup(PULSE_PIN, GPIO.OUT, initial=self.sqwave)
+		GPIO.add_event_detect(CLOCK_PIN, GPIO.FALLING, callback=self.isr, bouncetime=BOUNCE_TIME)
+
+	def isr(self, channel):
+		"""
+		GPIO interrupt service routine
+		"""
+
+		# This test is here because the user *might* have another HAT plugged in or another circuit that produces a
+		# falling-edge signal on another GPIO pin.
+		if channel != CLOCK_PIN:
+			return
+
+		# we can get the state of a pin with GPIO.input even when it is currently configured as an output
+		self.sqwave = not GPIO.input(PULSE_PIN)
+
+		# set pulse pin low before changing it to input to look for shutdown signal
+		GPIO.output(PULSE_PIN, False)
+		GPIO.setup(PULSE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+		if not GPIO.input(PULSE_PIN):
+			# pin is low, this is shutdown signal from pico
+			self.counter += 1
+			self.log.warning("Lost power supply, Pi will shutdown")
+			time.sleep(2)
+			os.system('/sbin/shutdown -h now')
+		else:
+			self.counter = 0
+
+		# change pulse pin back to output with flipped state
+		GPIO.setup(PULSE_PIN, GPIO.OUT, initial=self.sqwave)
+
+	def sigcatch(self, signum, frame):
+		"""
+		Signal handler
+		"""
+
+		if signum == signal.SIGTERM:
+			sys.exit(0)
+
+	def cleanup(self):
+		"""
+		GPIO cleanup
+		"""
+
+		self.log.debug("Cleanup")
+		self.log.info("Stopped")
+		GPIO.cleanup()
+
+	def run(self):
+		"""
+		Super-class overloaded run method.
+		"""
+
+		self.log.info("Started")
+		# register function to cleanup at exit
+		atexit.register(self.cleanup)
+
+		self.setup()
+
+		while True:
+			time.sleep(5)
+
+
+
+# parse the command-line
+parser = argparse.ArgumentParser()
+parser.add_argument('-l', '--log-level', help="Log level, 'info' or 'debug'", default='info', choices=['info', 'debug'])
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-d", "--debug", help="Keep in the foreground, do not daemonize", action="store_true", default=False)
+group.add_argument("-p", "--pid-file", help="PID file")
+args = parser.parse_args()
+	
+sd = fssd(args.pid_file, {'info':logging.INFO, 'debug':logging.DEBUG}[args.log_level])
+
+# the argument to the start method is opposite of debug
+sd.start(not args.debug)
+
