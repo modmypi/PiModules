@@ -19,6 +19,9 @@ files.txt
 # C related files
 *.o
 
+# xml config
+code/python/upspico/picofssd/etc/pimodules/picofssd/picofssd.xml
+
 
 
 
