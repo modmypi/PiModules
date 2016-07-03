@@ -15,7 +15,7 @@ import logging
 import logging.handlers
 import argparse
 import xmltodict
-
+import socket
 import RPi.GPIO as GPIO
 
 from pimodules.daemon import Daemon
@@ -123,8 +123,11 @@ class fssd(Daemon):
 					self.config['fssd:sender-email-address'], self.config['fssd:recipient-email-address'],
 					self.config['fssd:sender-password'], self.config['fssd:subject-template'],
 					self.config['fssd:body-template'])
+		except socket.error as e:
+			self.log.error(format("Exception in alert_email: %d, %s" % (e.errno, e.strerror)))
 		except:
-			self.log.error("Error in alert_email")
+			self.log.error("Unexpected error in alert_email:", sys.exc_info()[0])
+
 
 	def run(self):
 		"""

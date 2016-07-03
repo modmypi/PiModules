@@ -28,6 +28,10 @@ def get_ip_address():
 
 
 def sendEmail( emailserver, username, port, security, fromAddr, toAddr, b64Password, msgSubjectTemplate, msgBodyTemplate):
+	try:
+		port = int(port)
+	except ValueError:
+		port = 0
 
 	try:
 		now = datetime.datetime.now()
@@ -72,7 +76,7 @@ def sendEmail( emailserver, username, port, security, fromAddr, toAddr, b64Passw
 			server = smtplib.SMTP(serverstring)
 			server.starttls()
 
-		server.login(userName, password)
+		server.login(username, password)
 		server.sendmail(fromAddr, [toAddr], msg.as_string())
 		server.quit()
 	except:
