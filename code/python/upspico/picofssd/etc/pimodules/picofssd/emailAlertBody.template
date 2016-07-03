@@ -4,6 +4,6 @@ IP Address: {{ ipaddress }}
 
 Shutdown by UPS PIco file-safe shutdown daemon at {{ now }}
 
-This is an automatically generated email.  Do not replay to this message.
+This is an automatically generated email.  Do not reply to this message.
 
 

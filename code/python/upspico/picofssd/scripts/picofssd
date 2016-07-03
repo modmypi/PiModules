@@ -20,6 +20,7 @@ import RPi.GPIO as GPIO
 
 from pimodules.daemon import Daemon
 from pimodules.alerts import sendEmail
+from pimodules import configuration
 
 CLOCK_PIN = 27
 PULSE_PIN = 22
@@ -37,9 +38,14 @@ class fssd(Daemon):
 		handler.setFormatter(formatter)
 		self.log.addHandler(handler)
 
-		self.xmlconfig = xmlconfig
-		with open(self.xmlconfig, 'rt') as fi:
-			self.config = xmltodict.parse(fi)
+		try:
+			self.xmlconfig = xmlconfig
+			with open(self.xmlconfig, 'rt') as fi:
+				self.config = xmltodict.parse(fi)
+		except IOError as e:
+			self.log.warning("Failed to load XML config file, loading defaults. Alerts will be disabled")
+			self.config = xmltodict.parse(configuration.DEFAULT_FSSD_XML_CONFIG)
+
 		self.config = self.config['root']['fssd:config']['fssd:alerts']['fssd:email']
 		self.config['fssd:enabled'] = (self.config['fssd:enabled'] == 'True')
 
