@@ -61,6 +61,52 @@ To stop it:
 
 There is no `restart` or `reload` facility.
 
+
+Dependancy Installation
+-----------------------
+
+Running the file-safe shutdown daemon requires the installation of some dependancies.
+
+Here is how to install those dependancies and an explanation of each.
+
+The fastest way is just to follow these commands:
+
+	sudo apt-get install -y python-dev python-pip python-serial python-smbus python-jinja2 
+	sudo pip install psutil
+	sudo pip install xmltodict
+
+And here is a longer explanation of the purpose of each dependancy:
+
+* python-dev
+
+Some development libraries required by some of the other code.
+
+* python-pip
+
+The Python package installer, used to install some of the other pure Python dependancies.
+
+* python-serial
+
+Required by scripts used to update the UPS PIco firmware, but not actually used by the file-safe 
+shutdown daemon.
+
+* python-smbus
+
+Used by scripts that read values from the UPS PIco over the serial i2C bus.
+
+* python-jinja2 
+
+A templating engine used by the file-safe shutdown daemon to generate alert emails.
+
+* psutil
+
+Used by scripts that update the PIco firmware.
+
+* xmltodict
+
+An XML to Python dictionary and vice-versa library used by the file-safe shutdown daemon to read and 
+write it's XML configuration files.
+
 Directory Contents
 ------------------
 
@@ -95,6 +141,10 @@ This file.
 * scripts/
 
 Python script which is the file-safe shutdown daemon.
+
+* tools/
+
+Contains some odd files not installed by the installation process.
 
 * setup.cfg
 

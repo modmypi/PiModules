@@ -26,14 +26,13 @@ DEFAULT_FSSD_XML_CONFIG ="""<?xml version="1.0" encoding="utf-8"?>
 def read_config_xml(xml, default=True):
 	try:
 		if default:
-			dict = xmltodict.parse(xml)
+			dict = xmltodict.parse(DEFAULT_FSSD_XML_CONFIG)
 		else:
 			with open(xml, "rt") as fi:
 				dict = xmltodict.parse(fi)
 
 	except IOError as e:
-		print "Error reading XML config file: ", e
-		return False
+		dict = xmltodict.parse(DEFAULT_FSSD_XML_CONFIG)
 
 	return dict
 
