@@ -14,10 +14,12 @@ import time
 import logging
 import logging.handlers
 import argparse
+import xmltodict
 
 import RPi.GPIO as GPIO
 
 from pimodules.daemon import Daemon
+from pimodules.alerts import sendEmail
 
 CLOCK_PIN = 27
 PULSE_PIN = 22
@@ -25,7 +27,7 @@ BOUNCE_TIME = 30
 
 
 class fssd(Daemon):
-	def __init__(self, pidfile, loglevel=logging.NOTSET):
+	def __init__(self, pidfile, xmlconfig, loglevel=logging.NOTSET):
 		Daemon.__init__(self, pidfile)
 		self.loglevel = loglevel
 		self.log = logging.getLogger(__name__)
@@ -34,6 +36,12 @@ class fssd(Daemon):
 		formatter = logging.Formatter('%(module)s[%(process)s]: <%(levelname)s>: %(message)s')
 		handler.setFormatter(formatter)
 		self.log.addHandler(handler)
+
+		self.xmlconfig = xmlconfig
+		with open(self.xmlconfig, 'rt') as fi:
+			self.config = xmltodict.parse(fi)
+		self.config = self.config['root']['fssd:config']['fssd:alerts']['fssd:email']
+		self.config['fssd:enabled'] = (self.config['fssd:enabled'] == 'True')
 
 		signal.signal(signal.SIGTERM, self.sigcatch)
 
@@ -78,6 +86,7 @@ class fssd(Daemon):
 			# pin is low, this is shutdown signal from pico
 			self.counter += 1
 			self.log.warning("Lost power supply, Pi will shutdown")
+			self.alert_email()
 			time.sleep(2)
 			os.system('/sbin/shutdown -h now')
 		else:
@@ -103,12 +112,32 @@ class fssd(Daemon):
 		self.log.info("Stopped")
 		GPIO.cleanup()
 
+	def alert_email(self):
+		#emailserver, username, port, security, fromAddr, toAddr, b64Password, msgSubjectTemplate, msgBodyTemplate
+		try:
+			if not self.config['fssd:enabled']:
+				self.log.debug("Email alert is disabled")
+				return True
+
+			sendEmail(self.config['fssd:server'], self.config['fssd:username'], self.config['fssd:port'], self.config['fssd:security'],
+					self.config['fssd:sender-email-address'], self.config['fssd:recipient-email-address'],
+					self.config['fssd:sender-password'], self.config['fssd:subject-template'],
+					self.config['fssd:body-template'])
+		except:
+			self.log.error("Error in alert_email")
+
 	def run(self):
 		"""
 		Super-class overloaded run method.
 		"""
 
 		self.log.info("Started")
+		self.log.debug(self.config['fssd:enabled'])
+		self.log.debug(self.config['fssd:server'])
+		self.log.debug(self.config['fssd:username'])
+		self.log.debug(self.config['fssd:sender-email-address'])
+		self.log.debug(self.config['fssd:recipient-email-address'])
+
 		# register function to cleanup at exit
 		atexit.register(self.cleanup)
 
@@ -122,12 +151,13 @@ class fssd(Daemon):
 # parse the command-line
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--log-level', help="Log level, 'info' or 'debug'", default='info', choices=['info', 'debug'])
+parser.add_argument("-x", "--xml-config", help="XML config file", default='picofssd.xml', required=True)
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument("-d", "--debug", help="Keep in the foreground, do not daemonize", action="store_true", default=False)
 group.add_argument("-p", "--pid-file", help="PID file")
 args = parser.parse_args()
 	
-sd = fssd(args.pid_file, {'info':logging.INFO, 'debug':logging.DEBUG}[args.log_level])
+sd = fssd(args.pid_file, args.xml_config, {'info':logging.INFO, 'debug':logging.DEBUG}[args.log_level])
 
 # the argument to the start method is opposite of debug
 sd.start(not args.debug)

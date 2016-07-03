@@ -20,6 +20,14 @@ from distutils.core import setup
 
 doclines = __doc__.split("\n")
 
+
+
+datafiles=[
+	('/etc/pimodules/picofssd', ['etc/pimodules/picofssd/emailAlertBody.template', 'etc/pimodules/picofssd/emailAlertSubject.template', 'etc/pimodules/picofssd/picofssd.xml']),
+	('/etc/default', ['default/picofssd']),
+	('/etc/init.d', ['init.d/picofssd'])
+]
+
 setup(name='picofssd',
       version='0.1dev',
       description=doclines[0],
@@ -30,6 +38,6 @@ setup(name='picofssd',
       url='http://pimodules.com',
       platforms=['POSIX'],
       classifiers = filter(None, classifiers.split("\n")),
-      scripts=['scripts/picofssd'],
-      data_files=[('/etc/default', ['default/picofssd']),('/etc/init.d', ['init.d/picofssd'])]
+      scripts=['scripts/picofssd', 'scripts/picofssdxmlconfig'],
+      data_files = datafiles
       )

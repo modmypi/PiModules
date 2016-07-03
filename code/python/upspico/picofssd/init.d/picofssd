@@ -22,6 +22,7 @@ DAEMON=/usr/local/bin/$NAME
 DAEMON_ARGS=""
 LOGLEVEL=info
 PIDFILE=/var/run/$NAME.pid
+XMLCONFIG=/etc/pimodules/picofssd/picofssd.xml
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
@@ -33,6 +34,8 @@ SCRIPTNAME=/etc/init.d/$NAME
 # append daemon arguments
 [ -z "$LOGLEVEL" ] || DAEMON_ARGS="$DAEMON_ARGS --log-level $LOGLEVEL"
 [ -z "$PIDFILE" ] || DAEMON_ARGS="$DAEMON_ARGS --pid-file $PIDFILE"
+[ -z "$XMLCONFIG" ] || DAEMON_ARGS="$DAEMON_ARGS --xml-config $XMLCONFIG"
+
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh

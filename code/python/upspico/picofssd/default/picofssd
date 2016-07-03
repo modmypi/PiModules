@@ -1,6 +1,7 @@
 # Defaults file
 
 PIDFILE=/var/run/picofssd.pid
+XMLCONFIG=/etc/pimodules/picofssd/picofssd.xml
 LOGLEVEL=info
 VERBOSE=no
 
