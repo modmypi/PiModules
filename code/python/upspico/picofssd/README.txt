@@ -23,7 +23,7 @@ To install the `picofssd` script:
 
 	sudo python setup.py install
 
-You will need to install the `pimodules` Python package as well. See `../../pimodules/README.md`.
+You will need to install the `pimodules` Python package as well. See `../../package/README.md`.
 
 Hardware Installation
 ---------------------
