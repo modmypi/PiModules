@@ -20,7 +20,7 @@ files.txt
 *.o
 
 # xml config
-code/python/upspico/picofssd/etc/pimodules/picofssd/picofssd.xml
+#code/python/upspico/picofssd/etc/pimodules/picofssd/picofssd.xml
 
 
 
