@@ -7,7 +7,19 @@ This directory contains the installation scripts and the PiModules(R) Python pac
 Installation
 ------------
 
-To install the package:
+First you need to install a couple of Python dependencies.  Install python-pip like this:
+
+	sudo apt-get install python-pip
+
+Then install both `jinja2` and `xmltodict` like this:
+
+	sudo pip install jinja2
+	sudo pip install xmltodict
+
+Both of the above libraries are used in the sending of email alerts by the file-safe shutdown 
+daemon.
+
+Now install the pimodules package:
 
 	sudo python setup.py install
 

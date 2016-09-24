@@ -19,11 +19,17 @@ UPS PIco file-safe shutdown daemon = `picofssd`.
 Installation
 ------------
 
-To install the `picofssd` script:
+You will need to have installed the `pimodules` Python package. See 
+`../../package/README.md`.
+
+You will also need to have installed the Python dependencies outlined in the README.txt file in the 
+above named directory, these are `jinja2` and `xmltodict`.
+
+Now install the `picofssd` script:
 
 	sudo python setup.py install
 
-You will need to install the `pimodules` Python package as well. See `../../package/README.md`.
+
 
 Hardware Installation
 ---------------------
