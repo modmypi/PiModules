@@ -15,6 +15,14 @@ Code files and related stuff.
 
 Documentation
 
+* pico_status
+
+PIco Status Script - Script to show you some statistics pulled from your UPS PIco HV3.0A.
+
+* temp_fan
+
+Temperature Based Fan Script - Script to automatically change the fan speed based on the temperature of the TO92 sensor.
+
 * LICENSE
 
 Text of the Gnu General Public License version 3.
