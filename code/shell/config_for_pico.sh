@@ -18,6 +18,13 @@ pip install psutil
 echo '--- pip install xmltodict'
 pip install xmltodict
 
+echo '--- installing & enabling daemon'
+cd PiModules/code/python/package
+python setup.py install
+cd ../upspico/picofssd
+python setup.py install
+systemctl enable picofssd.service
+
 echo '--- adding line to config.txt'
 echo -e "\n\ndtoverlay=i2c-rtc,ds1307\n\n" >> /boot/config.txt
 echo -e "\n\nenable_uart=1\n\n" >> /boot/config.txt
