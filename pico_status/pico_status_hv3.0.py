@@ -155,8 +155,30 @@ def fan_state():
 def fan_speed():
    time.sleep(0.1)
    data = i2c.read_word_data(0x6b, 0x12)
-   data = format(data,"02x")
-   return (float(data) * 10)
+   if (data == 0x00):
+      return "OFF"
+   elif (data == 0x0a):
+      return "10%"
+   elif (data == 0x14):
+      return "20%"
+   elif (data == 0x1e):
+      return "30%"
+   elif (data == 0x28):
+      return "40%"
+   elif (data == 0x32):
+      return "50%"
+   elif (data == 0x3c):
+      return "60%"	  
+   elif (data == 0x46):
+      return "70%"
+   elif (data == 0x50):
+      return "80%"
+   elif (data == 0x5a):
+      return "90%"	
+   elif (data == 0x64):
+      return "100%"
+   else:
+      return "ERROR"  
 
 def r232_state():
    time.sleep(0.1)
@@ -210,7 +232,7 @@ print " ","A/D2 Voltage..........:",ad2_read(),"V"
 print " "
 print " ","PIco FAN Mode.........:",fan_mode()
 print " ","PIco FAN State........:",fan_state()
-print " ","PIco FAN Speed........:",fan_speed(),"RPM"
+print " ","PIco FAN Speed........:",fan_speed()
 print " "
 print "***********************************"
 print "         Powered by PiCo           "
