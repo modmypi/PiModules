@@ -18,24 +18,22 @@ pip install psutil
 echo '--- pip install xmltodict'
 pip install xmltodict
 
-echo '--- save and edit cmdline.txt'
-cp /boot/cmdline.txt /boot/cmdline.txt.save
-sed -i 's| console=serial0,115200 console=tty1||' /boot/cmdline.txt
-
-echo '--- save and edit config.txt'
-cp /boot/config.txt /boot/config.txt.save
-sed -i 's|#dtparam=i2c_arm=on|dtparam=i2c_arm=on|' /boot/config.txt
-
+echo '--- installing & enabling daemon'
+cd PiModules/code/python/package
+python setup.py install
+cd ../upspico/picofssd
+python setup.py install
+systemctl enable picofssd.service
 
 echo '--- adding line to config.txt'
-echo -e "\n\ndtparam=pi3-disable-bt\n\n" >> /boot/config.txt
+echo -e "\n\ndtoverlay=i2c-rtc,ds1307\n\n" >> /boot/config.txt
+echo -e "\n\nenable_uart=1\n\n" >> /boot/config.txt
 
 echo '--- adding lines to /etc/modules'
-echo -e "\n\ni2c-bcm2708\ni2c-dev\n\n" >> /etc/modules
+echo -e "\n\ni2c-bcm2708\ni2c-dev\rtc-ds1307\n\n" >> /etc/modules
 
-echo '--- disabling hciuart'
-systemctl disable hciuart
+echo '--- removing fake-hwclock'
+apt-get -y remove fake-hwclock && sudo update-rc.d -f fake-hwclock remove
 
 echo '--- all done'
 exit 0
-
