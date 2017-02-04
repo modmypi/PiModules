@@ -25,5 +25,8 @@ echo -e "\n\nenable_uart=1\n\n" >> /boot/config.txt
 echo '--- adding lines to /etc/modules'
 echo -e "\n\ni2c-bcm2708\ni2c-dev\rtc-ds1307\n\n" >> /etc/modules
 
+echo '--- removing fake-hwclock'
+apt-get -y remove fake-hwclock && sudo update-rc.d -f fake-hwclock remove
+
 echo '--- all done'
 exit 0
