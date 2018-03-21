@@ -2,7 +2,7 @@
 # coding: utf-8
 ###############################################################################
 # Python version of the linux beep program to control the UPS PIco's buzzer.
-# Copyright (C) 2018  Jimmy DEVEIL <deveil.jimmy@gmail.com>
+# Copyright (C) 2018  Jimmy DEVEIL <jimmy.deveil@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
