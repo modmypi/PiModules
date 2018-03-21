@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+# coding: utf-8
+###############################################################################
+# Python version of the linux beep program to control the UPS PIco's buzzer.
+# Copyright (C) 2018  Jimmy DEVEIL <deveil.jimmy@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+###############################################################################
+
+
+import smbus
+import time
+import sys
+import getopt
+
+chip_address = 0x6b
+freq_address = 0x0e
+dur_address  = 0x10
+
+version = 'beep-1.0.0 python version for i2c device'
+
+class Beep:
+    def __repr__(self):
+        return version
+
+    def usage(self):
+        print """Usage:
+beep [-f freq] [-l length] [-r reps] [-d delay] [-D delay] [--verbose | --debug]
+beep [Options...] [-n] [--new] [Options...] ... 
+beep [-h] [--help]
+beep [-v] [-V] [--version]"""
+
+    def __init__(self, argv):
+        self.i2c = smbus.SMBus(1)
+        self.beeps = []
+
+        try: opts, args = getopt.getopt(argv, 'f:l:r:d:D:nshvV', ['new', 'help', 'version'])
+        except:
+            self.usage()
+            sys.exit(1)
+
+        b = {}
+        for opt, arg in opts:
+            if opt in ('-h', '--help'):
+                self.usage()
+                sys.exit(0)
+            elif opt in ('-v', '-V', '--version'):
+                print self
+                sys.exit(0)
+            elif opt in ('-n', '--new'):
+                self.beeps.append(b)
+                b = {}
+            elif opt == '-f':
+                b['frequency'] = int(float(arg))
+            elif opt == '-l':
+                b['duration'] = min(255, int(arg)/10)
+            elif opt == '-r':
+                b['repeat'] = int(arg)
+            elif opt in ('-d', '-D'):
+                b['delay'] = int(arg)/1000.0
+        self.beeps.append(b)
+
+    def beep(self):
+        for b in self.beeps:
+            self._beep(**b)
+
+    def _beep(self, duration=10, frequency=750, repeat=1, delay=0):
+        delay = duration/100.0 + delay
+        for i in range(repeat):
+            self.i2c.write_word_data(chip_address, freq_address, frequency)
+            self.i2c.write_byte_data(chip_address, dur_address, duration)
+            time.sleep(delay)
+
+if __name__ == '__main__':
+    Beep(sys.argv[1:]).beep()
