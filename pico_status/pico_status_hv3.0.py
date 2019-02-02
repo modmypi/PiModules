@@ -138,6 +138,8 @@ def fan_mode():
       return "ENABLED"
    elif (data == 0):
       return "DISABLED"
+   elif (data == 2):
+      return "AUTO"
    else:
       return "ERROR"
 
