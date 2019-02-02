@@ -159,7 +159,7 @@ def rpi_cpu_temp():
    data = os.popen('vcgencmd measure_temp').readline()
    data = (data.replace("temp=","").replace("'C\n",""))	
    if (degrees == "C"):
-	return data
+	return float(data)
    elif (degrees == "F"):
 	return (float(data) * 9 / 5) + 32
 	
@@ -168,7 +168,7 @@ def ntc1_temp():
    data = i2c.read_byte_data(0x69, 0x1b)
    data = format(data,"02x")
    if (degrees == "C"):
-	return data
+	return float(data)
    elif (degrees == "F"):
 	return (float(data) * 9 / 5) + 32
 	
@@ -177,7 +177,7 @@ def to92_temp():
    data = i2c.read_byte_data(0x69, 0x1C)
    data = format(data,"02x")
    if (degrees == "C"):
-	return data
+	return float(data)
    elif (degrees == "F"):
 	return (float(data) * 9 / 5) + 32
 
