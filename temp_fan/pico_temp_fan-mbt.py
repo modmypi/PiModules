@@ -5,7 +5,7 @@ import logging
 import smbus
 from time import sleep
 
-logging.basicConfig(filename='/home/pi/PiModules/temp_fan/error.log',level=logging.INFO)
+logging.basicConfig(filename='/home/ve2mrx/fan_error.log',level=logging.INFO)
 
 # Set your desired temperature symbol
 # C = Celsius
@@ -22,24 +22,22 @@ def to92_temp():
                 return float(data)
         elif (degrees == "F"):
                 return (float(data) * 9 / 5) + 32
-				
+
 def rpi_cpu_temp():
-   time.sleep(0.1)
-   data = os.popen('vcgencmd measure_temp').readline()
-   data = (data.replace("temp=","").replace("'C\n",""))	
-   if (degrees == "C"):
-	return float(data)
-   elif (degrees == "F"):
-	return (float(data) * 9 / 5) + 32
-	
+        data = os.popen('vcgencmd measure_temp').readline()
+        data = (data.replace("temp=","").replace("'C\n",""))    
+        if (degrees == "C"):
+                return float(data)
+        elif (degrees == "F"):
+                return (float(data) * 9 / 5) + 32
+
 def ntc1_temp():
-   time.sleep(0.1)
-   data = i2c.read_byte_data(0x69, 0x1b)
-   data = format(data,"02x")
-   if (degrees == "C"):
-	return float(data)
-   elif (degrees == "F"):
-	return (float(data) * 9 / 5) + 32
+        data = i2c.read_byte_data(0x69, 0x1b)
+        data = format(data,"02x")
+        if (degrees == "C"):
+                return float(data)
+        elif (degrees == "F"):
+                return (float(data) * 9 / 5) + 32
 
 # function to set the fan speed
 def set_fan_speed(speed):
@@ -53,8 +51,8 @@ prev_temp = 0
 while True:
         try:
                 logging.info("checking temp")
-				temp = rpi_cpu_temp()
-                #temp = to92_temp()
+                temp = rpi_cpu_temp()
+                # temp = to92_temp()
                 logging.info("current temperature: %s",temp)
                 if temp != prev_temp: # check if temp has changed, no need to make unnecessary i2c calls
                         prev_temp = temp # update prev_temp variable to current temp to compare next time
@@ -65,11 +63,11 @@ while True:
                                 set_fan_speed(0)
                         if temp > 30:
                                 set_fan_speed(25)
-                        if temp > 60:
+                        if temp > 40:
                                 set_fan_speed(50)
-                        if temp > 70:
+                        if temp > 50:
                                 set_fan_speed(75)
-                        if temp > 80:
+                        if temp > 60:
                                 set_fan_speed(100)
         except:
                 logging.exception("Exception message:")
