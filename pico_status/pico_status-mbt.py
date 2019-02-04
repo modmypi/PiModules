@@ -298,12 +298,13 @@ if (extpwr == True):
 if (fankit == True):
     print " "
 if (fan_mode() == "AUTOMATIC"):
-    print " ","- PIco FAN Mode..........:",fan_mode()
-    print " ","- PIco FAN State.........:",fan_state()
-    if (fan_state() == "ON"):
-        print " ","- PIco FAN Speed.........:",fan_speed(),"RPM"
-    else:
-        print " ","- PIco FAN Speed.........: 0 RPM"
+    print " ","- PIco FAN Mode..........:",fan_mode(),"		(0x6b,0x11)"
+    print " ","- PIco FAN State.........:",fan_state(),"		(0x6b,0x13)"
+    #if (fan_state() == "ON"):
+    #    
+    print " ","- PIco FAN Speed.........:",fan_speed(),"RPM"
+    #else:
+    #    print " ","- PIco FAN Speed.........: 0 RPM"
     if (degrees == "C"):
         print " ","- PIco FAN Temp Threshold:",fan_threshold(),"C"
     elif (degrees == "F"):
