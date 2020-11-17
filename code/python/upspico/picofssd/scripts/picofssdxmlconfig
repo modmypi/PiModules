@@ -14,7 +14,7 @@ def get_yesno(help, prompt):
 	print(help)
 	yn = None
 	while yn not in ['y','n']:
-		yn = raw_input(prompt) or 'x'
+		yn = input(prompt) or 'x'
 		if yn not in ['y','n']:
 			print("Please answer 'y' or 'n'")
 
@@ -26,7 +26,7 @@ def is_correct(prompt, strval):
 	"""
 	yn = None
 	while yn not in ['y','n']:
-		yn = raw_input(format("You entered %s for the %s, is this correct? " % (strval, prompt))).lower()
+		yn = input(format("You entered %s for the %s, is this correct? " % (strval, prompt))).lower()
 		if yn not in ['y','n']:
 			print("Please answer 'y' or 'n'")
 
@@ -43,10 +43,10 @@ def enter_string(help, prompt, default=None, twice=True):
 	while True:
 		if default:
 			pt = format("Enter the value for the %s [ %s ]: " % (prompt, default))
-			str1 = raw_input(pt) or default
+			str1 = input(pt) or default
 		else:
 			pt = format("Enter the value for the %s: " % prompt)
-			str1 = raw_input(pt)
+			str1 = input(pt)
 			if not str1:
 				print("You cannot enter a zero-length string")
 				continue
@@ -60,10 +60,10 @@ def enter_string(help, prompt, default=None, twice=True):
 
 			if default:
 				pt = format("Re-enter the value for the %s (%s): " % (prompt, default))
-				str2 = raw_input(pt) or default
+				str2 = input(pt) or default
 			else:
 				pt = format("Re-enter the value for the %s: " % prompt)
-				str2 = raw_input(pt)
+				str2 = input(pt)
 
 			if str1 == str2:
 				break
@@ -86,10 +86,10 @@ def enter_integer(help, prompt, default=None, twice=True):
 	while True:
 		if default:
 			pt = format("Enter the value for the %s [ %s ]: " % (prompt, default))
-			str1 = raw_input(pt) or default
+			str1 = input(pt) or default
 		else:
 			pt = format("Enter the value for the %s: " % prompt)
-			str1 = raw_input(pt)
+			str1 = input(pt)
 			if not str1:
 				print("You cannot enter a zero-length string")
 				continue
@@ -111,10 +111,10 @@ def enter_integer(help, prompt, default=None, twice=True):
 
 			if default:
 				pt = format("Re-enter the value for the %s (%s): " % (prompt, default))
-				str2 = raw_input(pt) or default
+				str2 = input(pt) or default
 			else:
 				pt = format("Re-enter the value for the %s: " % prompt)
-				str2 = raw_input(pt)
+				str2 = input(pt)
 
 			if str1 == str2:
 				break
@@ -156,7 +156,7 @@ def get_choice(help, prompt, choices, show=False):
 
 	while choice.lower() not in choices:
 		try:
-			choice = raw_input(prompt).lower()
+			choice = input(prompt).lower()
 		except EOFError:
 			raise KeyboardInterrupt
 
@@ -242,7 +242,7 @@ The password for the email server and the email account.
 """
 
 password = double_enter_password(help, "password")
-configsubdict['fssd:sender-password'] = base64.b64encode(password)
+configsubdict['fssd:sender-password'] = base64.b64encode(password.encode("utf-8"))
 
 
 help = """
