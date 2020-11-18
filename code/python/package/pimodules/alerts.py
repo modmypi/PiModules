@@ -40,7 +40,7 @@ def sendEmail( emailserver, username, port, security, fromAddr, toAddr, b64Passw
 	except:
 		raise
 
-	password = base64.b64decode(b64Password)
+	password = base64.b64decode(b64Password).decode('utf-8')
 
 	tVars= { 'now' : now, 'host' : host, 'ipaddress' : ipaddress }
 

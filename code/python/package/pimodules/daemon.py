@@ -5,6 +5,7 @@ import time
 import atexit
 import logging
 import logging.handlers
+import contextlib
 
 from signal import SIGTERM
 
@@ -29,6 +30,25 @@ class Daemon(object):
 		self.stderr = stderr
 
 		self.pidfile = pidfile
+
+
+	def redirect_stream(self, system_stream, target_stream):
+		""" Redirect a system stream to a specified file.
+			:param standard_stream: A file object representing a standard I/O stream.
+			:param target_stream: The target file object for the redirected stream, or ``None`` to specify the null device.
+			:return: ``None``.
+			`system_stream` is a standard system stream such as
+			``sys.stdout``. `target_stream` is an open file object that
+			should replace the corresponding system stream object.
+			If `target_stream` is ``None``, defaults to opening the
+			operating system's null device and using its file descriptor.
+			"""
+		if target_stream is None:
+			target_fd = os.open(os.devnull, os.O_RDWR)
+		else:
+			target_fd = os.open(target_stream, os.O_RDWR)
+		system_stream.flush()
+		os.dup2(target_fd, system_stream.fileno())
 
 	def daemonize(self):
 		"""
@@ -62,21 +82,14 @@ class Daemon(object):
 			sys.exit(1)
 
 		# redirect standard file descriptors
-		sys.stdout.flush()
-		sys.stderr.flush()
-
-		si = file(self.stdin, 'r')
-		so = file(self.stdout, 'a+')
-		se = file(self.stderr, 'a+', 0)
-
-		os.dup2(si.fileno(), sys.stdin.fileno())
-		os.dup2(so.fileno(), sys.stdout.fileno())
-		os.dup2(se.fileno(), sys.stderr.fileno())
+		self.redirect_stream(sys.stdin, self.stdin)
+		self.redirect_stream(sys.stdout, self.stdout)
+		self.redirect_stream(sys.stderr, self.stderr)
 
 		# write pidfile
 		atexit.register(self.deletePidFile)
 		pid = str(os.getpid())
-		file(self.pidfile,'w+').write("%s\n" % pid)
+		open(self.pidfile,'w+').write("%s\n" % pid)
 
 	def deletePidFile(self):
 		os.remove(self.pidfile)
@@ -92,7 +105,7 @@ class Daemon(object):
 		if daemonize:
 			# Check for a pidfile to see if the daemon is already running
 			try:
-				pf = file(self.pidfile,'r')
+				pf = open(self.pidfile,'r')
 				pid = int(pf.read().strip())
 				pf.close()
 			except IOError:
