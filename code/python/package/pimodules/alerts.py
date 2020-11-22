@@ -42,7 +42,7 @@ def sendEmail( emailserver, username, port, security, fromAddr, toAddr, b64Passw
 
 	password = base64.b64decode(b64Password).decode('utf-8')
 
-	tVars= { 'now' : now, 'host' : host, 'ipaddress' : ipaddress }
+	tVars= { 'now' : now, 'host' : host.encode('ascii'), 'ipaddress' : ipaddress }
 
 	try:
 		templateLoader = jinja2.FileSystemLoader(searchpath="/")
