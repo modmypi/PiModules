@@ -48,8 +48,7 @@ fi
 
 echo '--- enable rtc'
 ### Checking if rtc dtoverlay module is loaded which doesn't work on older kernels
-#rtcmodule=`cat $config | grep dtoverlay=i2c-rtc,ds1307`
-rtcmodule=""
+rtcmodule=`cat $config | grep dtoverlay=i2c-rtc,ds1307`
 if [ "$rtcmodule" == "#dtoverlay=i2c-rtc,ds1307" ]; then
         sed -i -e 's/#dtoverlay=i2c-rtc,ds1307/dtoverlay=i2c-rtc,ds1307/g' $config
 else
