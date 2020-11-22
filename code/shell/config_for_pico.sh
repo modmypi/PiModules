@@ -35,7 +35,7 @@ else
 fi
 
 echo '--- enable uart'
-raspiuart=`cat $config | grep enable_uart`
+raspiuart=`cat $config | grep enable_uart=`
 if [ "$raspiuart" == "#enable_uart=1" ]; then
         sed -i "s,$raspiuart,enable_uart=1," $config
 elif [ "$raspiuart" == "#enable_uart=0" ]; then
