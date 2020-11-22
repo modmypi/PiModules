@@ -10,25 +10,61 @@ set -e
 echo '--- update'
 apt-get update
 echo '--- install some packages'
-apt-get install -y python3-dev python3-pip python3-serial python3-smbus python3-jinja2 wiringpi python3-psutil python3-xmltodict python3-rpi.gpio
+apt-get install -y python3-dev python3-pip python3-serial python3-smbus python3-jinja2 wiringpi
+
+echo '--- pip install psutil'
+pip install psutil
+
+echo '--- pip install xmltodict'
+pip install xmltodict
 
 echo '--- save and edit cmdline.txt'
 cp /boot/cmdline.txt /boot/cmdline.txt.save
 sed -i 's| console=serial0,115200 console=tty1||' /boot/cmdline.txt
 
 echo '--- save and edit config.txt'
-cp /boot/config.txt /boot/config.txt.save
-sed -i 's|#dtparam=i2c_arm=on|dtparam=i2c_arm=on|' /boot/config.txt
+config="/boot/config.txt"
+cp $config /boot/config.txt.save
 
-echo '--- adding line to config.txt'
-echo -e "\n\ndtparam=disable-bt\n\n" >> /boot/config.txt
+if grep -R "dtparam=i2c_arm=on" $config
+then
+	sed -i 's|#dtparam=i2c_arm=on|dtparam=i2c_arm=on|' $config
+else
+	echo 'dtparam=i2c_arm=on' $config
+fi
 
-#echo '--- adding lines to /etc/modules'
-#echo -e "\n\ni2c-bcm2708\ni2c-dev\n\n" >> /etc/modules
+raspiuart=`cat $config | grep enable_uart`
+if [ "$raspiuart" == "#enable_uart=1" ]; then
+	sed -i "s,$raspiuart,enable_uart=1," $config
+elif [ "$raspiuart" == "#enable_uart=0" ]; then
+	sed -i "s,$raspiuart,enable_uart=1," $config
+elif [ "$raspiuart" == "enable_uart=0" ]; then
+	sed -i "s,$raspiuart,enable_uart=1," $config
+else
+	sh -c "echo 'enable_uart=1' >> $config"
+fi
+
+### Checking if rtc dtoverlay module is loaded which doesn't work on older kernels
+	rtcmodule=`cat $config | grep dtoverlay=i2c-rtc,ds1307`
+	if [ "$rtcmodule" == "#dtoverlay=i2c-rtc,ds1307" ]; then
+		sed -i -e 's/dtoverlay=i2c-rtc,ds1307/dtoverlay=i2c-rtc,ds1307/g' $config
+	fi
+	sleep 1
+
 
 echo '--- disabling hciuart'
 systemctl disable hciuart
 
+echo '--- disable hwclock enable ds1307'
+apt-get -y remove fake-hwclock
+update-rc.d -f fake-hwclock remove
+systemctl disable fake-hwclock
+
+sed ':a;N;$!ba;s/if \[ -e \/run\/systemd\/system \] ; then\n    exit 0\nfi/#if \[ -e \/run\/systemd\/system \] ; then\n#    exit 0\n#fi/g' /lib/udev/hwclock-set
+sed -i -e 's/\/sbin\/hwclock --rtc=$dev --systz --badyear/#\/sbin\/hwclock --rtc=$dev --systz --badyear/g' /lib/udev/hwclock-set
+sed -i -e 's/\/sbin\/hwclock --rtc=$dev --systz/#\/sbin\/hwclock --rtc=$dev --systz/g' /lib/udev/hwclock-set
+#do later in fabfile
+#hwclock -w
+
 echo '--- all done'
 exit 0
-
