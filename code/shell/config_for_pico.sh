@@ -35,7 +35,7 @@ else
 fi
 
 echo '--- enable uart'
-raspiuart=`cat $config | grep "enable_uart"`
+raspiuart=$(cat $config | grep "enable_uart")
 if [ "$raspiuart" == "#enable_uart=1" ]; then
         sed -i "s,$raspiuart,enable_uart=1," $config
 elif [ "$raspiuart" == "#enable_uart=0" ]; then
@@ -48,7 +48,7 @@ fi
 
 echo '--- enable rtc'
 ### Checking if rtc dtoverlay module is loaded which doesn't work on older kernels
-rtcmodule=`cat $config | grep "dtoverlay=i2c-rtc,ds1307"`
+rtcmodule=$(cat $config | grep "dtoverlay=i2c-rtc,ds1307")
 if [ "$rtcmodule" == "#dtoverlay=i2c-rtc,ds1307" ]; then
         sed -i -e 's/#dtoverlay=i2c-rtc,ds1307/dtoverlay=i2c-rtc,ds1307/g' $config
 else
