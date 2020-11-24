@@ -140,7 +140,7 @@ class fssd(Daemon):
                 self.log.debug("Email alert is disabled")
                 return True
 
-            sendEmail(self.config['fssd:server'].decode('utf-8'), self.config['fssd:username'], self.config['fssd:port'], self.config['fssd:security'],
+            sendEmail(self.config['fssd:server'], self.config['fssd:username'], self.config['fssd:port'], self.config['fssd:security'],
                       self.config['fssd:sender-email-address'], self.config['fssd:recipient-email-address'],
                       self.config['fssd:sender-password'], self.config['fssd:subject-template'],
                       self.config['fssd:body-template'])

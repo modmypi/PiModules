@@ -35,7 +35,7 @@ def sendEmail(emailserver, username, port, security, fromAddr, toAddr, b64Passwo
 
     try:
         now = datetime.datetime.now()
-        host = get_host_name()
+        host = get_host_name().decode('utf-8')
         ipaddress = get_ip_address()
     except:
         raise
