@@ -71,7 +71,7 @@ class fssd(Daemon):
 
         # first interrupt on isr pin will start pulse high
         self.sqwave = True
-        self.lock = threading.RLock()
+        self.lock = RLock()
 
     def setup(self):
         """
