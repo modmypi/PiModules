@@ -25,7 +25,6 @@ import time
 import atexit
 import signal
 import os
-from threading import RLock
 """
 
 PiModules(R) UPS PIco file-safe shutdown daemon.
@@ -106,6 +105,8 @@ class fssd(Daemon):
             GPIO.output(PULSE_PIN, False)
             GPIO.setup(PULSE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             if not GPIO.input(PULSE_PIN):
+                # disable irq to prevent multiple mails
+                GPIO.remove_event_detect(CLOCK_PIN)
                 # pin is low, this is shutdown signal from pico
                 self.counter += 1
                 self.log.warning("Lost power supply, Pi will shutdown")
