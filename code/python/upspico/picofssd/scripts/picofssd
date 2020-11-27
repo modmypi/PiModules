@@ -104,7 +104,7 @@ class fssd(Daemon):
             # set pulse pin low before changing it to input to look for shutdown signal
             GPIO.output(PULSE_PIN, False)
             GPIO.setup(PULSE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            if not GPIO.input(PULSE_PIN):
+            if not GPIO.input(PULSE_PIN) & & (counter == 0):
                 # disable irq to prevent multiple mails
                 GPIO.remove_event_detect(CLOCK_PIN)
                 # pin is low, this is shutdown signal from pico
