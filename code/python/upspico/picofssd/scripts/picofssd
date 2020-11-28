@@ -67,10 +67,10 @@ class fssd(Daemon):
         signal.signal(signal.SIGTERM, self.sigcatch)
 
         self.counter = 0
+        self.mail_sent = False
 
         # first interrupt on isr pin will start pulse high
         self.sqwave = True
-        self.lock = RLock()
 
     def setup(self):
         """
@@ -92,32 +92,33 @@ class fssd(Daemon):
         """
         GPIO interrupt service routine
         """
-        with self.lock:
-            # This test is here because the user *might* have another HAT plugged in or another circuit that produces a
-            # falling-edge signal on another GPIO pin.
-            if channel != CLOCK_PIN:
-                return
+        # This test is here because the user *might* have another HAT plugged in or another circuit that produces a
+        # falling-edge signal on another GPIO pin.
+        if channel != CLOCK_PIN:
+            return
 
-            # we can get the state of a pin with GPIO.input even when it is currently configured as an output
-            self.sqwave = not GPIO.input(PULSE_PIN)
+        # we can get the state of a pin with GPIO.input even when it is currently configured as an output
+        self.sqwave = not GPIO.input(PULSE_PIN)
 
-            # set pulse pin low before changing it to input to look for shutdown signal
-            GPIO.output(PULSE_PIN, False)
-            GPIO.setup(PULSE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            if not GPIO.input(PULSE_PIN) & & (counter == 0):
-                # disable irq to prevent multiple mails
-                GPIO.remove_event_detect(CLOCK_PIN)
-                # pin is low, this is shutdown signal from pico
-                self.counter += 1
-                self.log.warning("Lost power supply, Pi will shutdown")
+        # set pulse pin low before changing it to input to look for shutdown signal
+        GPIO.output(PULSE_PIN, False)
+        GPIO.setup(PULSE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        if not GPIO.input(PULSE_PIN) and (counter == 0):
+            # disable irq to prevent multiple mails
+            GPIO.remove_event_detect(CLOCK_PIN)
+            # pin is low, this is shutdown signal from pico
+            self.counter += 1
+            self.log.warning("Lost power supply, Pi will shutdown")
+            if self.mail_sent == False:
+                self.mail_sent = True
                 self.alert_email()
-                time.sleep(2)
-                os.system('/sbin/shutdown -h now')
-            else:
-                self.counter = 0
+            time.sleep(2)
+            os.system('/sbin/shutdown -h now')
+        else:
+            self.counter = 0
 
-            # change pulse pin back to output with flipped state
-            GPIO.setup(PULSE_PIN, GPIO.OUT, initial=self.sqwave)
+        # change pulse pin back to output with flipped state
+        GPIO.setup(PULSE_PIN, GPIO.OUT, initial=self.sqwave)
 
     def sigcatch(self, signum, frame):
         """
