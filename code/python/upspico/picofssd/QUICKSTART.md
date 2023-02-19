@@ -7,8 +7,9 @@ See README.txt in this directory for dependencies.
 	sudo python3 setup.py install
 	cd ../../package
 	sudo python3 setup.py install
-	sudo update-rc.d picofssd defaults #TODO change to upstart!
-	sudo update-rc.d picofssd enable
+	sudo systemctl deamon-reload
+	sudo systemctl picofssd.service start
+	sudo systemctl picofssd.service enable
 
 After dependancies have been installed and the Pi has been rebooted the daemon should start.
 

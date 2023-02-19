@@ -25,7 +25,8 @@ doclines = __doc__.split("\n")
 datafiles=[
 	('/etc/pimodules/picofssd', ['etc/pimodules/picofssd/emailAlertBody.template', 'etc/pimodules/picofssd/emailAlertSubject.template', 'etc/pimodules/picofssd/picofssd.xml']),
 	('/etc/default', ['default/picofssd']),
-	('/etc/init.d', ['init.d/picofssd'])
+#	('/etc/init.d', ['init.d/picofssd']),
+	('/etc/systemd/system', ['systemd/picofssd.service'])
 ]
 
 setup(name='picofssd',
