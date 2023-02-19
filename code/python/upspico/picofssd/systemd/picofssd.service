@@ -1,0 +1,14 @@
+[Unit]
+Description=UPS PIco file-safe shutdown daemon
+
+[Service]
+User=root
+Restart=always
+RestartSec=1s
+StandardOutput=null
+StandardError=null
+ExecStart=/usr/bin/python3 /usr/local/bin/picofssd --log-level info --pid-file /var/run/picofssd.pid --xml-config /etc/pimodules/picofssd/picofssd.xml
+TimeoutSec=30
+
+[Install]
+WantedBy=multi-user.target
