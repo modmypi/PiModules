@@ -7,7 +7,9 @@ Restart=always
 RestartSec=1s
 StandardOutput=null
 StandardError=null
-ExecStart=/usr/bin/python3 /usr/local/bin/picofssd --log-level info --pid-file /var/run/picofssd.pid --xml-config /etc/pimodules/picofssd/picofssd.xml
+#Deamon mode seems not to work
+#ExecStart=/usr/bin/python3 /usr/local/bin/picofssd --log-level info --pid-file /var/run/picofssd.pid --xml-config /etc/pimodules/picofssd/picofssd.xml
+ExecStart=/usr/bin/python3 /usr/local/bin/picofssd --log-level info -d --xml-config /etc/pimodules/picofssd/picofssd.xml
 TimeoutSec=30
 
 [Install]
