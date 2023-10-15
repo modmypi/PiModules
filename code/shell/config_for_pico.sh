@@ -10,13 +10,13 @@ set -e
 echo '--- update'
 apt-get update
 echo '--- install some packages'
-apt-get install -y python3-dev python3-pip python3-serial python3-smbus python3-jinja2 python3-rpi.gpio # wiringpi
+apt-get install -y python3-dev python3-pip python3-serial python3-smbus python3-jinja2 python3-rpi.gpio python3-psutil python3-xmltodict # wiringpi
 
-echo '--- pip install psutil'
-pip3 install psutil
+# echo '--- pip install psutil'
+# pip3 install psutil
 
-echo '--- pip install xmltodict'
-pip3 install xmltodict
+# echo '--- pip install xmltodict'
+# pip3 install xmltodict
 
 echo '--- save and edit cmdline.txt'
 cp /boot/cmdline.txt /boot/cmdline.txt.save
