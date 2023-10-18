@@ -39,6 +39,6 @@ setup(name='picofssd',
       platforms=['POSIX'],
       classifiers = list(filter(None, classifiers.split("\n"))),
       scripts=['scripts/picofssd', 'scripts/picofssdxmlconfig'],
-      data_files = datafiles
+      data_files = datafiles,
       packages = ['etc','default','systemd']
       )
