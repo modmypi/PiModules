@@ -29,7 +29,7 @@ datafiles=[
 ]
 
 setup(name='picofssd',
-      version='0.1dev',
+      version='0.1.dev0',
       description=doclines[0],
       long_description = "\n".join(doclines[2:]),
       license='GPL3',
