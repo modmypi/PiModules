@@ -16,7 +16,7 @@ Operating System :: Linux (Raspbian)
 """
 
 
-from distutils.core import setup
+from setuptools import setup
 
 doclines = __doc__.split("\n")
 
@@ -25,7 +25,6 @@ doclines = __doc__.split("\n")
 datafiles=[
 	('/etc/pimodules/picofssd', ['etc/pimodules/picofssd/emailAlertBody.template', 'etc/pimodules/picofssd/emailAlertSubject.template', 'etc/pimodules/picofssd/picofssd.xml']),
 	('/etc/default', ['default/picofssd']),
-#	('/etc/init.d', ['init.d/picofssd']),
 	('/etc/systemd/system', ['systemd/picofssd.service'])
 ]
 
@@ -38,7 +37,7 @@ setup(name='picofssd',
       author_email='mike.ray@btinternet.com',
       url='http://pimodules.com',
       platforms=['POSIX'],
-      classifiers = filter(None, classifiers.split("\n")),
+      classifiers = list(filter(None, classifiers.split("\n"))),
       scripts=['scripts/picofssd', 'scripts/picofssdxmlconfig'],
       data_files = datafiles
       )
