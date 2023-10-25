@@ -2,21 +2,22 @@
 Installation
 ------------
 
-See README.txt in this directory for dependancies.
+See README.txt in this directory for dependencies.
 
-	sudo python setup.py install
+	sudo python3 setup.py install
 	cd ../../package
-	sudo python setup.py install
-	sudo update-rc.d picofssd defaults
-	sudo update-rc.d picofssd enable
+	sudo python3 setup.py install
+	sudo systemctl deamon-reload
+	sudo systemctl picofssd.service start
+	sudo systemctl picofssd.service enable
 
 After dependancies have been installed and the Pi has been rebooted the daemon should start.
 
 XML Configuration File
 ----------------------
 
-The file-safe shutdown daemon requires an XML configuration file to run.  It controls the email 
-alert settings that the daemon uses to know how to send an email when it detects a shutdown has been 
+The file-safe shutdown daemon requires an XML configuration file to run.  It controls the email
+alert settings that the daemon uses to know how to send an email when it detects a shutdown has been
 requested by the UPS PIco.
 
 A script is installed by the installation process which can be used to create this XML file.
@@ -43,12 +44,12 @@ Or it can create this file directly like this:
 
 	sudo picofssdxmlconfig -d -o /etc/pimodules/picofssd/picofssd.xml
 
-You can also read from an existing XML configuration file and create a new one, keeping some of the 
+You can also read from an existing XML configuration file and create a new one, keeping some of the
 settings from the old file and only changing your choice of settings.  To do this:
 
 	picofssdxmlconfig -i oldfile.xml -o newfile.xml
 
-Settings will be read from the old file and presented for you to either keep or replace and write 
+Settings will be read from the old file and presented for you to either keep or replace and write
 forward to the new file.
 
 Here is an explanation of the settings you will be asked to enter.
@@ -77,7 +78,7 @@ The email address to which the alert email should be sent.
 
 The password required by the email server.
 
-The password is stored on the filesystem encrypted and decryypted by the daemon when it sends an 
+The password is stored on the filesystem encrypted and decryypted by the daemon when it sends an
 email.
 
 * Security method
@@ -94,7 +95,5 @@ A file name of the `jinja2` template used by the daemon to generate the text for
 
 Absolute path to a `jinja2` template used by the daemon to generate the email message body.
 
-In most cases you will be asked to confirm each entry and asked to enter each twice to make sure you 
+In most cases you will be asked to confirm each entry and asked to enter each twice to make sure you
 entered them correctly.
-
-

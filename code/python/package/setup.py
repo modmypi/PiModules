@@ -15,12 +15,12 @@ Operating System :: Linux (Raspbian)
 """
 
 
-from distutils.core import setup
+from setuptools import setup
 
 doclines = __doc__.split("\n")
 
 setup(name='pimodules',
-      version='0.1dev',
+      version='0.1.dev0',
       description=doclines[0],
       long_description = "\n".join(doclines[2:]),
       license='GPL3',
@@ -28,6 +28,6 @@ setup(name='pimodules',
       author_email='mike.ray@btinternet.com',
       url='http://pimodules.com',
       platforms=['POSIX'],
-      classifiers = filter(None, classifiers.split("\n")),
+      classifiers = list(filter(None, classifiers.split("\n"))),
       packages=['pimodules'],
       )

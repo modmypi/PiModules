@@ -8,78 +8,78 @@ from email.mime.text import MIMEText
 
 
 def get_host_name():
-	try:
-		command = "uname -n"
-		process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-		output = process.communicate()[0]
-		return output
-	except:
-		return None
+    try:
+        command = "uname -n"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+        output = process.communicate()[0]
+        return output
+    except:
+        return None
 
 
 def get_ip_address():
-	try:
-		command = "hostname -I"
-		process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-		output = process.communicate()[0]
-		return output
-	except:
-		return None
+    try:
+        command = "hostname -I"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+        output = process.communicate()[0]
+        return output
+    except:
+        return None
 
 
-def sendEmail( emailserver, username, port, security, fromAddr, toAddr, b64Password, msgSubjectTemplate, msgBodyTemplate):
-	try:
-		port = int(port)
-	except ValueError:
-		port = 0
+def sendEmail(emailserver, username, port, security, fromAddr, toAddr, b64Password, msgSubjectTemplate, msgBodyTemplate):
+    try:
+        port = int(port)
+    except ValueError:
+        port = 0
 
-	try:
-		now = datetime.datetime.now()
-		host = get_host_name()
-		ipaddress = get_ip_address()
-	except:
-		raise
+    try:
+        now = datetime.datetime.now()
+        host = get_host_name().decode('utf-8')
+        ipaddress = get_ip_address()
+    except:
+        raise
 
-	password = base64.b64decode(b64Password)
+    password = base64.b64decode(b64Password).decode('utf-8')
 
-	tVars= { 'now' : now, 'host' : host, 'ipaddress' : ipaddress }
+    tVars = {'now': now, 'host': host, 'ipaddress': ipaddress}
 
-	try:
-		templateLoader = jinja2.FileSystemLoader(searchpath="/")
-		templateEnv = jinja2.Environment( loader=templateLoader )
+    try:
+        templateLoader = jinja2.FileSystemLoader(searchpath="/")
+        templateEnv = jinja2.Environment(loader=templateLoader)
 
-		subjectTemplate = templateEnv.get_template(msgSubjectTemplate)
-		bodyTemplate = templateEnv.get_template(msgBodyTemplate)
+        subjectTemplate = templateEnv.get_template(msgSubjectTemplate)
+        bodyTemplate = templateEnv.get_template(msgBodyTemplate)
 
-		msgSubject = subjectTemplate.render(tVars)
-		msgBody = bodyTemplate.render(tVars)
+        msgSubject = subjectTemplate.render(tVars)
+        msgBody = bodyTemplate.render(tVars)
 
-	except:
-		raise
+    except:
+        raise
 
-	# Writing the message
-	msg = MIMEText(msgBody)
-	msg['Subject'] = msgSubject
-	msg['From'] = fromAddr
-	msg['To'] = toAddr
+    # Writing the message
+    msg = MIMEText(msgBody)
+    msg['Subject'] = msgSubject
+    msg['From'] = fromAddr
+    msg['To'] = toAddr
 
-	# Sending the message
-	try:
-		if port:
-			serverstring = format("%s:%d" % (emailserver, port))
-		else:
-			serverstring = emailserver
+    # Sending the message
+    try:
+        if port:
+            serverstring = format("%s:%d" % (emailserver, port))
+        else:
+            serverstring = emailserver
 
-		if security.lower() in ['ssl']:
-			server = smtplib.SMTP_SSL(serverstring)
-		else:
-			server = smtplib.SMTP(serverstring)
-			server.starttls()
+        if security.lower() in ['ssl']:
+            server = smtplib.SMTP_SSL(serverstring)
+        else:
+            server = smtplib.SMTP(serverstring)
+            server.starttls()
 
-		server.login(username, password)
-		server.sendmail(fromAddr, [toAddr], msg.as_string())
-		server.quit()
-	except:
-		raise
+        server.login(username, password)
+        server.sendmail(fromAddr, [toAddr], msg.as_string())
+        server.quit()
+    except:
+        raise
 
-	return True
+    return True

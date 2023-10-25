@@ -16,20 +16,16 @@ Operating System :: Linux (Raspbian)
 """
 
 
-from distutils.core import setup
+from setuptools import setup
 
 doclines = __doc__.split("\n")
 
-
-
 datafiles=[
-	('/etc/pimodules/picofssd', ['etc/pimodules/picofssd/emailAlertBody.template', 'etc/pimodules/picofssd/emailAlertSubject.template', 'etc/pimodules/picofssd/picofssd.xml']),
-	('/etc/default', ['default/picofssd']),
-	('/etc/init.d', ['init.d/picofssd'])
+	('.', ['scripts/picofssd.py','scripts/picofssdxmlconfig'])
 ]
 
 setup(name='picofssd',
-      version='0.1dev',
+      version='0.2.dev0',
       description=doclines[0],
       long_description = "\n".join(doclines[2:]),
       license='GPL3',
@@ -37,7 +33,8 @@ setup(name='picofssd',
       author_email='mike.ray@btinternet.com',
       url='http://pimodules.com',
       platforms=['POSIX'],
-      classifiers = filter(None, classifiers.split("\n")),
-      scripts=['scripts/picofssd', 'scripts/picofssdxmlconfig'],
+      classifiers = list(filter(None, classifiers.split("\n"))),
+      install_requires=['fake-rpi','xmltodict','jinja2','rpi.gpio'],
+      packages=['scripts'],
       data_files = datafiles
       )

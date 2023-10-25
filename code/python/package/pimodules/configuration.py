@@ -41,9 +41,7 @@ def write_config_xml(xmlfile, dict):
 	        with open(xmlfile, "wt") as fo:
 	                xmltodict.unparse(dict, fo, pretty=True)
 	except IOError as e:
-		print "Error writing XML file: ", e
+		print("Error writing XML file: "+e)
 		return False
 
 	return True
-
-

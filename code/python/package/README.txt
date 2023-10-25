@@ -7,25 +7,25 @@ This directory contains the installation scripts and the PiModules(R) Python pac
 Installation
 ------------
 
-First you need to install a couple of Python dependencies.  Install python-pip like this:
+First you need to install a couple of Python dependencies.  Install python3-pip like this:
 
-	sudo apt-get install python-pip
+	sudo apt-get install python3-pip
 
 Then install both `jinja2` and `xmltodict` like this:
 
-	sudo pip install jinja2
-	sudo pip install xmltodict
+	sudo pip3 install jinja2
+	sudo pip3 install xmltodict
 
-Both of the above libraries are used in the sending of email alerts by the file-safe shutdown 
+Both of the above libraries are used in the sending of email alerts by the file-safe shutdown
 daemon.
 
 Now install the pimodules package:
 
-	sudo python setup.py install
+	sudo python3 setup.py install
 
 You can record what files are installed by the above process by running it like this:
 
-	sudo python setup.py install --record <filename>
+	sudo python3 setup.py install --record <filename>
 
 Where <filename> will be a text file containing one line per file installed by the process.
 
@@ -68,6 +68,3 @@ This file.
 * setup.py
 
 Installation file, see `README.md` in the directory above this one.
-
-
-

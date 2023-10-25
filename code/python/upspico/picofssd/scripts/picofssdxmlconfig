@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import argparse
 import xmltodict
@@ -11,12 +11,12 @@ def get_yesno(help, prompt):
 	"""
 	Accepts either 'y' or 'n' at the command-line
 	"""
-	print help
+	print(help)
 	yn = None
 	while yn not in ['y','n']:
-		yn = raw_input(prompt) or 'x'
+		yn = input(prompt) or 'x'
 		if yn not in ['y','n']:
-			print "Please answer 'y' or 'n'"
+			print("Please answer 'y' or 'n'")
 
 	return yn == 'y'
 
@@ -26,9 +26,9 @@ def is_correct(prompt, strval):
 	"""
 	yn = None
 	while yn not in ['y','n']:
-		yn = raw_input(format("You entered %s for the %s, is this correct? " % (strval, prompt))).lower()
+		yn = input(format("You entered %s for the %s, is this correct? " % (strval, prompt))).lower()
 		if yn not in ['y','n']:
-			print "Please answer 'y' or 'n'"
+			print("Please answer 'y' or 'n'")
 
 	return yn == 'y'
 
@@ -37,18 +37,18 @@ def enter_string(help, prompt, default=None, twice=True):
 	Accepts a string value at the command line, asks the user to confirm whether it is the correct
 	value	and optionally does the accept twice and compares the two occurrences
 	"""
-	print help
+	print(help)
 	default = default or ''
 	savedefault = default
 	while True:
 		if default:
 			pt = format("Enter the value for the %s [ %s ]: " % (prompt, default))
-			str1 = raw_input(pt) or default
+			str1 = input(pt) or default
 		else:
 			pt = format("Enter the value for the %s: " % prompt)
-			str1 = raw_input(pt)
+			str1 = input(pt)
 			if not str1:
-				print "You cannot enter a zero-length string"
+				print("You cannot enter a zero-length string")
 				continue
 
 		if is_correct(prompt, str1):
@@ -60,15 +60,15 @@ def enter_string(help, prompt, default=None, twice=True):
 
 			if default:
 				pt = format("Re-enter the value for the %s (%s): " % (prompt, default))
-				str2 = raw_input(pt) or default
+				str2 = input(pt) or default
 			else:
 				pt = format("Re-enter the value for the %s: " % prompt)
-				str2 = raw_input(pt)
+				str2 = input(pt)
 
 			if str1 == str2:
 				break
 			else:
-				print "Values do not match"
+				print("Values do not match")
 
 	return str2
 
@@ -80,26 +80,26 @@ def enter_integer(help, prompt, default=None, twice=True):
 	integer, optionally accepting it twice and comparing the two strings to make sure
 	they are the same
 	"""
-	print help
+	print(help)
 	default = default or ''
 	savedefault = default
 	while True:
 		if default:
 			pt = format("Enter the value for the %s [ %s ]: " % (prompt, default))
-			str1 = raw_input(pt) or default
+			str1 = input(pt) or default
 		else:
 			pt = format("Enter the value for the %s: " % prompt)
-			str1 = raw_input(pt)
+			str1 = input(pt)
 			if not str1:
-				print "You cannot enter a zero-length string"
+				print("You cannot enter a zero-length string")
 				continue
 		try:
 			integer = int(str1)
 		except ValueError:
-			print "You must enter a valid integer"
+			print("You must enter a valid integer")
 			continue
 		except TypeError:
-			print "You must enter a valid integer"
+			print("You must enter a valid integer")
 			continue
 
 		if is_correct(prompt, str1):
@@ -111,15 +111,15 @@ def enter_integer(help, prompt, default=None, twice=True):
 
 			if default:
 				pt = format("Re-enter the value for the %s (%s): " % (prompt, default))
-				str2 = raw_input(pt) or default
+				str2 = input(pt) or default
 			else:
 				pt = format("Re-enter the value for the %s: " % prompt)
-				str2 = raw_input(pt)
+				str2 = input(pt)
 
 			if str1 == str2:
 				break
 			else:
-				print "Values do not match"
+				print("Values do not match")
 
 	return str2
 
@@ -129,7 +129,7 @@ def double_enter_password(help, prompt):
 	Accepts a password entered at the command-line and checks both instances
 	are the same
 	"""
-	print help
+	print(help)
 	while True:
 		pt = format("Enter the value for the %s: " % prompt)
 		str1 = getpass.getpass(pt)
@@ -139,7 +139,7 @@ def double_enter_password(help, prompt):
 		if str1 == str2:
 			break
 		else:
-			print "Values do not match"
+			print("Values do not match")
 
 	return str2
 
@@ -149,14 +149,14 @@ def get_choice(help, prompt, choices, show=False):
 	Accepts a string at the command-line. Choice entered must be one of the choices in the list. Optionally shows the choices
 	available in the prompt
 	"""
-	print help
+	print(help)
 	choice = ''
 	if show:
 		prompt += '(' + ','.join(choices) + ')'
 
 	while choice.lower() not in choices:
 		try:
-			choice = raw_input(prompt).lower()
+			choice = input(prompt).lower()
 		except EOFError:
 			raise KeyboardInterrupt
 
@@ -242,7 +242,7 @@ The password for the email server and the email account.
 """
 
 password = double_enter_password(help, "password")
-configsubdict['fssd:sender-password'] = base64.b64encode(password)
+configsubdict['fssd:sender-password'] = base64.b64encode(password.encode("utf-8"))
 
 
 help = """
@@ -316,6 +316,3 @@ configsubdict['fssd:body-template'] = body_template
 
 
 configuration.write_config_xml(args.output_xml, configdict)
-
-
-
